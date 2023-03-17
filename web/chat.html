@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <!-- 声明文当的字符编码 -->
+    <meta charset="UTF-8">
+    <!-- 作者信息 -->
+    <meta name="author" content="大漠" />
+
+    <!-- 页面描述 -->
+    <meta name="description" content="前端入门课之UI基础课入口" />
+
+    <!-- 视窗设置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="./favicon5.png" />
+    <title>聊天室</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row-reverse;
+            background:
+                radial-gradient(black 15%, transparent 16%) 0 0,
+                radial-gradient(black 15%, transparent 16%) 8px 8px,
+                radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 0 1px,
+                radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 8px 9px;
+            background-color: #282828;
+            background-size: 16px 16px;
+            color: #fff;
+        }
+
+        aside {
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #2e3238;
+        }
+
+        aside h2 {
+            margin: 0;
+            padding: 16px 20px;
+            width: 100%;
+            border-bottom: 1px solid rgb(4 4 4 / 44%);
+            box-shadow: 0 1px 0 0 rgb(236 225 225 / 12%);
+        }
+
+        aside ul {
+            list-style: none outside none;
+            width: 100%;
+        }
+
+        aside li {
+            min-height: 50px;
+            display: flex;
+            border-bottom: 1px solid rgb(4 4 4 / 44%);
+            box-shadow: 0 1px 0 0 rgb(236 225 225 / 12%);
+        }
+
+
+        aside a {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: #fff;
+            text-decoration: none;
+            width: 100%;
+            background: transparent;
+            transition: .2s linear;
+        }
+
+        aside a:hover {
+            background: rgb(71 66 76 / 32%);
+        }
+
+
+        section {
+            flex: 1;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #F2F5F8;
+            color: #434651;
+        }
+
+        header {
+            padding: 16px 20px;
+            width: 100%;
+            border-bottom: 2px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        main {
+            width: 100%;
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            /* 这个很重要*/
+        }
+
+        .overflow-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+
+        .overflow-container::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            background-color: #444444;
+        }
+
+        .overflow-container::-webkit-scrollbar {
+            width: 8px;
+            background-color: #f5f5f5;
+            margin: 2px;
+        }
+
+        .overflow-container::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background-color: #d62929;
+            background-image: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 0, 0, 0.4) 50%,
+                    transparent,
+                    transparent);
+        }
+
+        main ul {
+            list-style: none outside none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        main li {
+            width: 100%;
+            display: flex;
+        }
+
+        main li:not(:last-child) {
+            margin-bottom: 24px;
+        }
+
+        main .my-message {
+            flex-direction: row-reverse;
+        }
+
+        .media__object {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #94C2ED;
+            overflow: hidden;
+            margin-right: 14px;
+        }
+
+        .media__body {
+            color: white;
+            padding: 18px 20px;
+            line-height: 1.625;
+            font-size: 16px;
+            border-radius: 8px;
+            background-color: #94C2ED;
+            position: relative;
+        }
+
+        .media__body::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            top: 14px;
+            background-color: #94C2ED;
+            right: 100%;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            border-radius: 2px 0 0 0;
+        }
+
+        main .my-message .media__object {
+            border-color: #86BB71;
+            margin-right: 0;
+            margin-left: 14px;
+        }
+
+        main .my-message .media__body {
+            background-color: #86BB71;
+        }
+
+        main .my-message .media__body::before {
+            right: auto;
+            left: 100%;
+            background-color: #86BB71;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+            border-radius: 0 2px 0 0;
+        }
+
+        .media__object img {
+            border-radius: 50%;
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+            object-position: center;
+        }
+
+        footer {
+            width: 100%;
+            padding: 16px 20px;
+            border-top: 2px solid white;
+            display: flex;
+            align-items: center;
+        }
+
+        footer div{
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        textarea {
+            border: none;
+            padding: 10px 20px;
+            font: 14px/22px "Lato", Arial, sans-serif;
+            border-radius: 5px;
+            resize: none;
+            height: 70px;
+            flex: 1;
+        }
+
+        button {
+
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            outline: 0;
+            border: 0;
+            cursor: pointer;
+            will-change: box-shadow, transform;
+            background: radial-gradient(100% 100% at 100% 0%, #89E5FF 0%, #5468FF 100%);
+            box-shadow: 0px 2px 4px rgb(45 35 66 / 40%), 0px 7px 13px -3px rgb(45 35 66 / 30%), inset 0px -3px 0px rgb(58 65 111 / 50%);
+            padding: 0 32px;
+            border-radius: 6px;
+            color: #fff;
+            height: 50px;
+            font-size: 18px;
+            margin-left: 18px;
+            text-shadow: 0 1px 0 rgb(0 0 0 / 40%);
+            transition: box-shadow 0.15s ease, transform 0.15s ease;
+        }
+
+        button:hover {
+            box-shadow: 0px 4px 8px rgb(45 35 66 / 40%), 0px 7px 13px -3px rgb(45 35 66 / 30%), inset 0px -3px 0px #3c4fe0;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            box-shadow: inset 0px 3px 7px #3c4fe0;
+            transform: translateY(2px);
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <header>
+            <h1 id="chat-window">群聊</h1>
+        </header>
+        <main>
+            <div class="overflow-container" id='scrolldIV'>
+                <div class="overflow-content" >
+
+                    <ul id = 'message-container'>
+                        <li class="media">
+                            <!--
+                                 <div id="scrolldIV" style="overflow:auto; height: 100px; width: 400px; border: 1px solid #999;">
+                            -->
+                           
+                            
+                            
+                            
+                        </li>
+                        <li class="media my-message">
+                            
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <div>
+                <textarea name="message" id="my-message" cols="30" rows="3" onkeypress="if(event.keyCode==13) keypress()"></textarea>
+                <!--<div id="scrolldIV" style="overflow:auto; height: 100px; width: 400px; border: 1px solid #999;">
+                </div>-->
+                <button  onclick="send()">发送</button>
+            </div>
+            
+            
+        </footer>
+    </section>
+    <aside>
+        <h2 id="my-profile">成员</h2>
+        <ul id='name-list'>
+           
+        </ul>
+    </aside>
+    <script type="text/javascript" src="/socket.io/socket.io.js">/*scr默认是外部引入，中间内容掠过*/</script>
+    <script>
+        /*
+        setTimeout("randlogin()",1000);
+        */
+        function randlogin(){
+            document.getElementById('name-list').innerHTML+=
+            `<li>
+                <a href="/">小明</a>
+            </li>
+            `
+        }
+        for(var i=0;i<1;i++){
+        /*
+        setTimeout("cronymessage()",(i+1)*1000);
+        */}
+        
+        function cronymessage(){
+            document.getElementById('message-container').innerHTML+=
+            ` <li class="media">
+                            <div class="media__object">
+                                <img src="/avata-1.jpg" alt="大漠" />
+                            </div>
+                            <div class="media__body">
+                                <p>哦</p>
+                            </div>
+                        </li>
+            `
+        }
+        /*
+        function send(){
+            var mymessage=document.getElementById('my-message').value;
+            document.getElementById('message-container').innerHTML+=
+           ` <li class="media my-message">
+                 <div class="media__object">
+                    <img src="/avata-2.jpg" alt="Tony" />
+                  </div>
+                 <div class="media__body">
+                     <p>${mymessage}</p>
+                 </div>
+              </li>`;
+            document.getElementById('my-message').value='';
+            cronymessage();
+        }
+        */
+       function send(){
+        var mymessage=document.getElementById('my-message').value;
+        
+        document.getElementById('message-container').innerHTML+=
+           ` <li class="media my-message">
+                 <div class="media__object">
+                    <label>${name}</label>
+                  </div>
+                 <div class="media__body">
+                     <p>${mymessage}</p>
+                 </div>
+              </li>`;
+            document.getElementById('my-message').value='';
+            var div = document.getElementById('scrolldIV');
+            div.scrollTop = div.scrollHeight;
+            socket.emit('sendMessage',mymessage);
+       }
+        function keypress(){
+            send();
+        }
+
+        var name = decodeURIComponent(location.search).split('=')[1];
+        window.onload = function(){
+            socket=io({
+                query:{
+                    name:name,
+                    verify:true,
+                },
+                reconnection:false
+            })
+            socket.on('connect',()=>{
+                console.log('链接成功！');
+                socket.emit('gethistory',(data)=>{
+                console.log('history',data);
+                console.log(data.length);
+                                document.getElementById('message-container').innerHTML+=data.map(value=>{
+                    if(value.sender==name){
+                        return (`<li class="media my-message">
+                            <div class="media__object">
+                                <label>${value.sender}</label>
+                            </div>
+                            <div class="media__body">
+                                <p>${value.content}</p>
+                            </div>
+                        </li>  
+                        `);
+                    }
+                    
+                    return  ` <li class="media">
+                            <div class="media__object">
+                                <label>${value.sender}</label>
+                            </div>
+                            <div class="media__body">
+                                <p>${value.content}</p>
+                            </div>
+                        </li>  `
+                }).join("");
+                })
+               
+                
+            })
+            socket.on('receiveMessage',(message)=>{
+                document.getElementById('message-container').innerHTML+=  ` <li class="media">
+                            <div class="media__object">
+                                <label>${message.sender}</label>
+                            </div>
+                            <div class="media__body">
+                                <p>${message.content}</p>
+                            </div>
+                        </li>  `
+                })
+                
+            
+            socket.on('online',(onlines)=>{
+                console.log('onlines',onlines);
+                console.log(document.getElementById('name-list').innerHTML);
+                var friendSection = document.getElementById('name-list');
+                friendSection.innerHTML=onlines.map(name=>{
+                    return `<li>
+                   <a href="/">${name}</a>
+                 </li>
+                 `;
+                }).join('');
+                document.getElementById('chat-window').innerHTML='群聊('+(onlines.length)+')';
+                console.log(document.getElementById('name-list').innerHTML);
+            })
+        }
+    </script>
+</body>
+
+</html>
